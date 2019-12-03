@@ -24,7 +24,6 @@ public class Ups  implements UpsSendInstructionType, IEquipment {
 	private InstructionQueue<IEquipmentInstruction> instructionQueue = null; // 不同ups有不同的轮训规则 类实例化时初始化
 	private ReceiveAndSendData inAndOut = null;
 
-
 	/**
 	 * static{}(即static块)，会在类被加载的时候执行且仅会被执行一次，一般用来初始化静态变量和调用静态方法，下面我们详细的讨论一下该语句块的特性及应用。
 	 *

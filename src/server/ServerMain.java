@@ -42,9 +42,7 @@ public class ServerMain{
 				logger.trace("云盒连接建立  " + df.format(new Date()));
 				socket.setSoTimeout(30*1000);// 读取数据时阻塞链路的超时时间。
                 ReceiveAndSendData inAndOut = new ReceiveAndSendData(socket);
-                String mac = inAndOut.getMACAddress();
-                logger.trace("读取设备mac地址: " + mac);
-				new Thread(new PollingThread(inAndOut,mac),"云盒" + mac).start();//每有一个云盒建立请求就开启一个新的线程
+				new Thread(new PollingThread(inAndOut)).start();//每有一个云盒建立请求就开启一个新的线程
 			}
 		}catch(FileNotFoundException e) {
 			//找不到socket配置文件

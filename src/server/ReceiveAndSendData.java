@@ -79,8 +79,10 @@ public class ReceiveAndSendData {
 
     public String getMACAddress() throws IOException {
         String order = "MAC"; // 发送获取mac地址的命令
-        pw.write(order);
-        pw.flush();
+		//将字符转换成字节数组，并且指定UTF-8编码
+		byte[] dataByteArr = order.getBytes("UTF-8");
+        out.write(dataByteArr);
+        out.flush();
         byte buf[] = new byte[6];
         in.readFully(buf, 0, 6);
         String macAddress ="";

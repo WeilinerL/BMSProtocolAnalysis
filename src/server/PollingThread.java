@@ -25,8 +25,7 @@ public final class PollingThread implements Runnable,IEquipmentsType{
 	private int pollingTime = 60;// 无配置文件时默认轮训时间 单位:秒
 	private InstructionQueue<IEquipmentInstruction> instructionQueue = new InstructionQueue<>();
 
-	public PollingThread(ReceiveAndSendData inAndOut, String mac){
-	    this.mac = mac;
+	public PollingThread(ReceiveAndSendData inAndOut){
 		this.inAndOut = inAndOut;
 	}
 
@@ -36,6 +35,9 @@ public final class PollingThread implements Runnable,IEquipmentsType{
 		//读取配置文件,获得轮询时间
 		Properties prop = new Properties();
 		try {
+			logger.trace("读取设备mac地址...");
+			mac = inAndOut.getMACAddress();
+			logger.trace("设备mac地址为: " + mac);
 		    logger.trace("读取轮询时间配置文件");
 			InputStream PollingTimePropertiesinStream = PollingThread.class.getClassLoader().getResourceAsStream("resources/pollingTime.properties");
 			prop.load(PollingTimePropertiesinStream);
@@ -44,13 +46,14 @@ public final class PollingThread implements Runnable,IEquipmentsType{
 		} catch (IOException e2) {
 			//logRecorder.writeLog("read pollingTime fail\r\n"+e2.getMessage());
 			e2.printStackTrace();
-			logger.trace("read pollingTime fail");
+			logger.trace("read mac address fail or read pollingTime fail");
 		}
 		try {
 			//创建数据实体类
 //			System.out.println("获取设备mac地址");
 //			String mac = inAndOut.getMACAddress();
 			//这里写数据库查询语句查询该设备的类型
+			Thread.sleep(3000);
 			logger.trace("创建并初始化实体类");
 			// 这里要更改的话只能通过先读取设备的mac地址在创建相应的设备
 			equipment = EquipmentsFactory.createEquipment(mac,ups,inAndOut,instructionQueue);
@@ -66,7 +69,7 @@ public final class PollingThread implements Runnable,IEquipmentsType{
 			senderAndReceiver = new SenderAndReceiver(inAndOut,instructionQueue);
 			logger.trace("启动发送接收线程");
 			//启动发送接收线程
-			senderAndReceiverThread = new Thread(senderAndReceiver);
+			senderAndReceiverThread = new Thread(senderAndReceiver,mac);
 			senderAndReceiverThread.start();
 			logger.trace("发送接收线程启动成功");
 
@@ -99,9 +102,9 @@ public final class PollingThread implements Runnable,IEquipmentsType{
 			//logRecorder.writeLog("because of socket is closed,the pollingThread will stop");
 		}catch(NumberFormatException e){
 			//logRecorder.writeLog("pollingTime is not a number \r\n"+e.getMessage());
-		}catch (IOException e) {
+		}catch (IOException | InterruptedException e) {
 			e.printStackTrace();
-		}finally {
+		} finally {
 			inAndOut.close();
 		}
 	}

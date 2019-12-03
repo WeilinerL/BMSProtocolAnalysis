@@ -97,7 +97,7 @@ public class UpsInstruction  implements UpsSendInstructionType, IEquipmentInstru
                             upsDao.addRecord(mac,"resistance",value,battery_id,batteryGroup);
 							break;
 						case get_Capacity:
-                            upsDao.addRecord(mac,"capacity",value,batteryId,batteryGroup);
+                            upsDao.addRecord(mac,"capacity",value,battery_id,batteryGroup);
 							break;
 						case get_OneChannel:
 							int numOfBatteries = (0xff&data[0]) * 16 + (0xff&data[1]);

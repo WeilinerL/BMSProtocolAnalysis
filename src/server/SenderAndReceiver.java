@@ -54,6 +54,7 @@ public class SenderAndReceiver implements Runnable{
 			else {
 				//logRecorder.writeLog("the thread is listening whether the socket is alive or not");
 				int count = 0;
+				// 以下代码实际上只在第一次指令为空时执行
 				while(isListen) {
 					logger.trace("指令为空 线程监听Socket");
 					count ++;
@@ -77,6 +78,12 @@ public class SenderAndReceiver implements Runnable{
 				if(!isAlive)
 					break;
 				//logRecorder.writeLog("Listenning is over,now,continue to send");
+			}
+			try{
+//				logger.trace("指令间睡眠一秒...");
+				Thread.sleep(1000);
+			}catch (InterruptedException e) {
+				e.printStackTrace();
 			}
 		}
 		try {
